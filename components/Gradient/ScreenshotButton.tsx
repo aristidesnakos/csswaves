@@ -1,6 +1,5 @@
 import React from 'react';
 import * as htmlToImage from 'html-to-image';
-import styles from './GradientBackground.module.css';
 
 interface ScreenshotButtonProps {
   targetId: string;
@@ -24,7 +23,9 @@ const ScreenshotButton: React.FC<ScreenshotButtonProps> = ({ targetId }) => {
   };
 
   return (
-    <button onClick={handleScreenshot} className={styles.screenshotButton}>
+    <button 
+      onClick={handleScreenshot} 
+      className="px-6 py-2 mt-4 font-semibold text-white bg-purple-500 rounded-lg shadow-lg">
       Take a screenshot
     </button>
   );
