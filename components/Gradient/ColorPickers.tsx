@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChromePicker } from 'react-color';
+import { ChromePicker, ColorResult } from 'react-color';
 
 interface ColorPickersProps {
   colors: string[];
@@ -9,9 +9,9 @@ interface ColorPickersProps {
 const ColorPickers: React.FC<ColorPickersProps> = ({ colors, setColors }) => {
   const [activeColorPicker, setActiveColorPicker] = useState<number | null>(null);
 
-  const handleColorChange = (index: number, color: { hex: string }) => {
+  const handleColorChange = (index: number, color: ColorResult) => {
     const newColors = [...colors];
-    newColors[index] = color.hex;
+    newColors[index] = color.hex; // Always use hex value
     setColors(newColors);
   };
 
