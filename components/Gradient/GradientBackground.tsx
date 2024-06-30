@@ -5,7 +5,7 @@ import HorizontalWaveAnimation from './HorizontalWaveAnimation';
 import CircularWaveAnimation from './CircularWaveAnimation';
 import ColorPickers from './ColorPickers';
 import ExportCode from '@/components/utils/ExportCode';
-import ExportGif from './ExportGif';
+import ExportGif from '@/components/utils/ExportGif';
 import { toPng } from 'html-to-image';
 
 type AnimationType = 'gradient' | 'horizontalWave' | 'circularWave';
