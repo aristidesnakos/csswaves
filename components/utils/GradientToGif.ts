@@ -32,47 +32,50 @@ export async function animationToGif({
     const ctx = canvas.getContext('2d')!;
 
     const frames = duration * fps;
-    const interval = duration / frames;
-    let frameCount = 0;
+    const interval = 1000 / fps;
 
-    function renderFrame(progress: number) {
-      ctx.clearRect(0, 0, width, height);
-      switch (animationType) {
-        case 'gradient':
-          renderGradient(ctx, colors, progress, width, height);
-          break;
-        case 'horizontalWave':
-          renderHorizontalWave(ctx, colors, progress, width, height);
-          break;
-        case 'circularWave':
-          renderCircularWave(ctx, colors, progress, width, height);
-          break;
-      }
+    for (let i = 0; i < frames; i++) {
+      const progress = i / frames;
+      renderFrame(ctx, colors, progress, width, height, animationType);
+      gif.addFrame(ctx, { copy: true, delay: interval });
     }
 
-    function captureFrame() {
-      if (frameCount >= frames) {
-        gif.render();
-        return;
-      }
-
-      const progress = frameCount / frames;
-      renderFrame(progress);
-      gif.addFrame(ctx, { copy: true, delay: interval * 1000 });
-      frameCount++;
-      requestAnimationFrame(captureFrame);
-    }
-
-    gif.on('finished', blob => {
+    gif.on('finished', (blob: Blob) => {
       resolve(blob);
     });
 
-    captureFrame();
+    gif.render();
   });
 }
 
+function renderFrame(
+  ctx: CanvasRenderingContext2D, 
+  colors: string[], 
+  progress: number, 
+  width: number, 
+  height: number, 
+  animationType: 'gradient' | 'horizontalWave' | 'circularWave'
+) {
+  switch (animationType) {
+    case 'gradient':
+      renderGradient(ctx, colors, progress, width, height);
+      break;
+    case 'horizontalWave':
+      renderHorizontalWave(ctx, colors, progress, width, height);
+      break;
+    case 'circularWave':
+      renderCircularWave(ctx, colors, progress, width, height);
+      break;
+  }
+}
+
 function renderGradient(ctx: CanvasRenderingContext2D, colors: string[], progress: number, width: number, height: number) {
-  const gradient = ctx.createLinearGradient(0, 0, width, height);
+  const gradient = ctx.createLinearGradient(
+    width * (progress % 1),
+    height * (progress % 1),
+    width * ((progress + 0.5) % 1),
+    height * ((progress + 0.5) % 1)
+  );
   gradient.addColorStop(0, colors[0]);
   gradient.addColorStop(1, colors[1]);
   ctx.fillStyle = gradient;
@@ -89,79 +92,52 @@ function renderHorizontalWave(ctx: CanvasRenderingContext2D, colors: string[], p
   const waveHeight = height * 0.4;
   const baseY = height - waveHeight;
 
-  // Render three waves with different frequencies and amplitudes
-  renderWave(ctx, width, height, baseY, progress, 0.02, 15, 0);
-  renderWave(ctx, width, height, baseY, progress, 0.03, 10, Math.PI / 2);
-  renderWave(ctx, width, height, baseY, progress, 0.01, 20, Math.PI / 4);
-}
-
-function renderWave(
-  ctx: CanvasRenderingContext2D, 
-  width: number, 
-  height: number, 
-  baseY: number, 
-  progress: number, 
-  frequency: number, 
-  amplitude: number, 
-  phaseShift: number
-) {
   ctx.beginPath();
-  ctx.moveTo(0, baseY);
-  for (let x = 0; x < width; x++) {
-    const y = Math.sin((x * frequency + progress * Math.PI * 2 + phaseShift)) * amplitude + baseY;
+  ctx.moveTo(0, height);
+  for (let x = 0; x <= width; x++) {
+    const y = Math.sin((x * 0.02 + progress * Math.PI * 2)) * 15 + baseY;
     ctx.lineTo(x, y);
   }
-  ctx.lineTo(width, baseY);
   ctx.lineTo(width, height);
-  ctx.lineTo(0, height);
-  ctx.closePath();
   ctx.fill();
 }
 
 function renderCircularWave(ctx: CanvasRenderingContext2D, colors: string[], progress: number, width: number, height: number) {
+  const backgroundColor = colors[0] || '#2C74B3';
+  const waveColor = colors[1] || '#FFFFFF';
+
   // Background
-  ctx.fillStyle = colors[0];
+  ctx.fillStyle = backgroundColor;
   ctx.fillRect(0, 0, width, height);
 
-  // Circular wave
   const centerX = width / 2;
   const centerY = height / 2;
-  const radius = Math.min(width, height) * 0.4;
+  const size = Math.min(width, height);
 
   ctx.save();
+  ctx.translate(centerX, centerY);
+
+  // Clip to a circle
   ctx.beginPath();
-  ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+  ctx.arc(0, 0, size / 2, 0, Math.PI * 2);
   ctx.clip();
 
-  // Render two overlapping circular waves
-  renderCircularWaveLayer(ctx, colors[1], centerX, centerY, radius, progress, 6, 15, 1);
-  renderCircularWaveLayer(ctx, colors[1] + '80', centerX, centerY, radius, -progress * 0.5, 8, 10, 0.7);
+  // Draw two rotating ellipses
+  for (let i = 0; i < 2; i++) {
+    ctx.save();
+    
+    // Rotate based on progress
+    const rotation = (progress * Math.PI * 2) + (i * Math.PI / 2);
+    ctx.rotate(rotation);
+
+    // Draw ellipse
+    ctx.beginPath();
+    ctx.ellipse(0, 0, size * 0.6, size * 0.5, 0, 0, Math.PI * 2);
+    ctx.fillStyle = i === 0 ? waveColor : `${waveColor}80`;
+    ctx.fill();
+
+    ctx.restore();
+  }
 
   ctx.restore();
-}
-
-function renderCircularWaveLayer(
-  ctx: CanvasRenderingContext2D,
-  color: string,
-  centerX: number,
-  centerY: number,
-  radius: number,
-  progress: number,
-  frequency: number,
-  amplitude: number,
-  scale: number
-) {
-  ctx.fillStyle = color;
-  ctx.beginPath();
-  for (let angle = 0; angle < Math.PI * 2; angle += 0.01) {
-    const waveRadius = radius * scale + Math.sin(angle * frequency + progress * Math.PI * 2) * amplitude;
-    const x = centerX + Math.cos(angle) * waveRadius;
-    const y = centerY + Math.sin(angle) * waveRadius;
-    if (angle === 0) {
-      ctx.moveTo(x, y);
-    } else {
-      ctx.lineTo(x, y);
-    }
-  }
-  ctx.fill();
 }

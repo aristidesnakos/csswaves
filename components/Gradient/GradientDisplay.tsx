@@ -4,16 +4,14 @@ import { ensureHexColor } from '@/libs/colorUtils';
 
 interface GradientDisplayProps {
   colors: string[];
-  isAnimationPaused: boolean;
   animationDuration: number;
 }
 
 const GradientDisplay = forwardRef<HTMLDivElement, GradientDisplayProps>(
-  ({ colors, isAnimationPaused, animationDuration }, ref) => {
+  ({ colors, animationDuration }, ref) => {
     const gradientStyle: CSSProperties = {
       backgroundImage: `linear-gradient(-45deg, ${colors.map(ensureHexColor).join(', ')})`,
       animationDuration: `${animationDuration}s`,
-      animationPlayState: isAnimationPaused ? 'paused' : 'running',
     };
 
     return (

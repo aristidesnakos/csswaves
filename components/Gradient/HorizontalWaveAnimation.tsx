@@ -3,13 +3,11 @@ import React from 'react';
 interface HorizontalWaveAnimationProps {
   colors: string[];
   animationDuration: number;
-  isAnimationPaused: boolean;
 }
 
 const HorizontalWaveAnimation: React.FC<HorizontalWaveAnimationProps> = ({ 
   colors, 
   animationDuration,
-  isAnimationPaused
 }) => {
   const backgroundColor = colors[0] || '#000000';
   const waveColors = [
@@ -36,7 +34,6 @@ const HorizontalWaveAnimation: React.FC<HorizontalWaveAnimationProps> = ({
     }
     .parallax > use {
       animation: move-forever ${animationDuration}s cubic-bezier(.55, .5, .45, .5) infinite;
-      animation-play-state: ${isAnimationPaused ? 'paused' : 'running'};
     }
     .parallax > use:nth-child(1) {
       animation-delay: -2s;
