@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { gradientToGif } from './GradientToGif';
+import { animationToGif } from './GradientToGif';
 
 interface ExportGifProps {
   colors: string[];
   duration: number;
+  animationType: 'gradient' | 'horizontalWave' | 'circularWave';
 }
 
-const ExportGif: React.FC<ExportGifProps> = ({ colors, duration }) => {
+const ExportGif: React.FC<ExportGifProps> = ({ colors, duration, animationType }) => {
   const [isExporting, setIsExporting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -15,18 +16,19 @@ const ExportGif: React.FC<ExportGifProps> = ({ colors, duration }) => {
     setError(null);
 
     try {
-      const blob = await gradientToGif({
+      const blob = await animationToGif({
         colors,
         width: 300,
         height: 150,
         duration,
-        fps: 30
+        fps: 30,
+        animationType
       });
 
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = 'gradient-animation.gif';
+      link.download = `${animationType}-animation.gif`;
       link.click();
     } catch (error) {
       console.error('Error exporting GIF:', error);
