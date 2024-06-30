@@ -1,6 +1,7 @@
 import React, { forwardRef, CSSProperties } from 'react';
 import BubbleAnimation from './BubbleAnimation';
 import styles from './GradientBackground.module.css';
+import { ensureHexColor } from '@/libs/colorUtils';
 
 interface GradientDisplayProps {
   colors: string[];
@@ -14,7 +15,7 @@ interface GradientDisplayProps {
 const GradientDisplay = forwardRef<HTMLDivElement, GradientDisplayProps>(
   ({ colors, bubbleColor, bubbleSpeed, containerSize, isAnimationPaused, animationDuration }, ref) => {
     const gradientStyle: CSSProperties = {
-      background: `linear-gradient(-45deg, ${colors.join(', ')})`,
+      background: `linear-gradient(-45deg, ${colors.map(ensureHexColor).join(', ')})`,
       backgroundSize: '400% 400%',
       animationPlayState: isAnimationPaused ? 'paused' : 'running',
       '--animation-duration': `${animationDuration}s`,
@@ -32,7 +33,7 @@ const GradientDisplay = forwardRef<HTMLDivElement, GradientDisplayProps>(
         <BubbleAnimation 
           containerWidth={containerSize.width} 
           containerHeight={containerSize.height}
-          bubbleColor={bubbleColor}
+          bubbleColor={ensureHexColor(bubbleColor)}
           bubbleSpeed={bubbleSpeed}
           isPaused={isAnimationPaused}
         />

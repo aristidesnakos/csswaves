@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ChromePicker, ColorResult } from 'react-color';
+import { ensureHexColor } from '@/libs/colorUtils';
 
 interface ColorPickersProps {
   colors: string[];
@@ -11,7 +12,7 @@ const ColorPickers: React.FC<ColorPickersProps> = ({ colors, setColors }) => {
 
   const handleColorChange = (index: number, color: ColorResult) => {
     const newColors = [...colors];
-    newColors[index] = color.hex; // Always use hex value
+    newColors[index] = ensureHexColor(color.hex);
     setColors(newColors);
   };
 
@@ -27,14 +28,14 @@ const ColorPickers: React.FC<ColorPickersProps> = ({ colors, setColors }) => {
           <div key={index} className="relative">
             <button
               className="w-12 h-12 rounded-full border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              style={{ backgroundColor: color }}
+              style={{ backgroundColor: ensureHexColor(color) }}
               onClick={() => toggleColorPicker(index)}
               aria-label={`Select color ${index + 1}`}
             ></button>
             {activeColorPicker === index && (
               <div className="absolute z-10 mt-2">
                 <ChromePicker
-                  color={color}
+                  color={ensureHexColor(color)}
                   onChange={(color) => handleColorChange(index, color)}
                 />
               </div>

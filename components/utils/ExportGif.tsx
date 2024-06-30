@@ -17,14 +17,24 @@ const ExportGif: React.FC<ExportGifProps> = ({ targetId, duration }) => {
         logging: false,
         useCORS: true,
         scale: 1,
-        backgroundColor: null
+        backgroundColor: null,
+        onclone: (document) => {
+          const targetClone = document.getElementById(targetId);
+          if (targetClone) {
+            console.log('Cloned element styles:', targetClone.getAttribute('style'));
+          }
+        }
       });
       return canvas;
     } catch (error) {
       console.error('Error capturing frame:', error);
+      if (error instanceof Error) {
+        console.error('Error message:', error.message);
+        console.error('Error stack:', error.stack);
+      }
       throw error;
     }
-  }, []);
+  }, [targetId]);
 
   const handleExport = async () => {
     setIsExporting(true);
@@ -37,6 +47,8 @@ const ExportGif: React.FC<ExportGifProps> = ({ targetId, duration }) => {
     }
 
     try {
+      console.log('Target element styles:', target.getAttribute('style'));
+
       const gif = new GIF({
         workers: 2,
         quality: 10,
@@ -45,7 +57,7 @@ const ExportGif: React.FC<ExportGifProps> = ({ targetId, duration }) => {
         transparent: 'rgba(0,0,0,0)'
       });
 
-      const frames = 30; // Reduced number of frames for better performance
+      const frames = 30;
       const interval = duration * 1000 / frames;
 
       for (let i = 0; i < frames; i++) {
@@ -65,7 +77,11 @@ const ExportGif: React.FC<ExportGifProps> = ({ targetId, duration }) => {
       gif.render();
     } catch (error) {
       console.error('Error exporting GIF:', error);
-      setError('Failed to export GIF. Please try again.');
+      if (error instanceof Error) {
+        setError(`Failed to export GIF: ${error.message}`);
+      } else {
+        setError('Failed to export GIF. Please try again.');
+      }
       setIsExporting(false);
     }
   };
