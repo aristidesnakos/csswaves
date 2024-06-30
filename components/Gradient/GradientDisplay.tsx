@@ -12,9 +12,8 @@ const GradientDisplay = forwardRef<HTMLDivElement, GradientDisplayProps>(
   ({ colors, isAnimationPaused, animationDuration }, ref) => {
     const gradientStyle: CSSProperties = {
       backgroundImage: `linear-gradient(-45deg, ${colors.map(ensureHexColor).join(', ')})`,
-      backgroundSize: '400% 400%',
-      animationPlayState: isAnimationPaused ? 'paused' : 'running',
       animationDuration: `${animationDuration}s`,
+      animationPlayState: isAnimationPaused ? 'paused' : 'running',
     };
 
     return (

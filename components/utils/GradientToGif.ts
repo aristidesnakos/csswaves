@@ -35,18 +35,20 @@ export function gradientToGif({
     for (let i = 0; i < frames; i++) {
       const progress = i / frames;
       
-      // Create a diagonal gradient
       const gradient = ctx.createLinearGradient(-width, 0, width * 2, height);
       
-      // Add color stops to create a repeating pattern
       colors.forEach((color, index) => {
-        const baseStop = index / (colors.length - 1);
-        const animatedStop = (baseStop + progress) % 1;
+        const baseStop = index / (colors.length);
+        let animatedStop = (baseStop + progress) % 1;
+        
+        animatedStop = Math.max(0, Math.min(1, animatedStop));
+        
         gradient.addColorStop(animatedStop, color);
         
-        // Add an extra stop to ensure smooth looping
         if (animatedStop < baseStop) {
-          gradient.addColorStop(animatedStop + 1, color);
+          let extraStop = animatedStop + 1;
+          extraStop = Math.min(1, extraStop);
+          gradient.addColorStop(extraStop, color);
         }
       });
 
