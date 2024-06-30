@@ -1,4 +1,5 @@
 import GIF from 'gif.js';
+import html2canvas from 'html2canvas';
 
 interface AnimationToGifOptions {
   colors: string[];
@@ -84,7 +85,7 @@ export async function animationToGif({
 }
 
 function setupGradientAnimation(element: HTMLElement, style: HTMLStyleElement, colors: string[], duration: number) {
-  element.style.background = `linear-gradient(-45deg, ${colors.join(', ')})`;
+  element.style.background = `linear-gradient(-45deg, ${colors[0]}, ${colors[1]})`;
   element.style.backgroundSize = '400% 400%';
   element.style.animation = `gradientAnimation ${duration}s ease infinite`;
 

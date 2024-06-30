@@ -22,7 +22,7 @@ const ColorPickers: React.FC<ColorPickersProps> = ({ colors, setColors }) => {
 
   return (
     <div className="flex flex-col items-center gap-4">
-      <h3 className="text-lg font-semibold">Gradient Colors</h3>
+      {/* <h3 className="text-lg font-semibold">Gradient Colors</h3> */}
       <div className="flex gap-4">
         {colors.map((color, index) => (
           <div key={index} className="relative">

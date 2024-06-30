@@ -5,21 +5,24 @@ interface ExportGifProps {
   colors: string[];
   duration: number;
   animationType: 'gradient' | 'horizontalWave' | 'circularWave';
+  animationRef: React.RefObject<HTMLDivElement>;
 }
 
-const ExportGif: React.FC<ExportGifProps> = ({ colors, duration, animationType }) => {
+const ExportGif: React.FC<ExportGifProps> = ({ colors, duration, animationType, animationRef }) => {
   const [isExporting, setIsExporting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleExport = async () => {
+    if (!animationRef.current) return;
+
     setIsExporting(true);
     setError(null);
 
     try {
       const blob = await animationToGif({
         colors,
-        width: 300,
-        height: 150,
+        width: animationRef.current.clientWidth,
+        height: animationRef.current.clientHeight,
         duration,
         fps: 30,
         animationType
@@ -43,7 +46,7 @@ const ExportGif: React.FC<ExportGifProps> = ({ colors, duration, animationType }
       <button 
         onClick={handleExport} 
         disabled={isExporting}
-        className="px-6 py-2 mt-4 font-semibold text-white bg-green-500 rounded-lg shadow-lg disabled:bg-green-300"
+        className="px-6 py-2 mt-4 font-semibold text-white bg-green-500 rounded-lg shadow-lg disabled:bg-green-300 hover:bg-green-600 transition-colors"
       >
         {isExporting ? 'Exporting...' : 'Export as GIF'}
       </button>

@@ -11,69 +11,79 @@ const HorizontalWaveAnimation: React.FC<HorizontalWaveAnimationProps> = ({
   animationDuration,
   isAnimationPaused
 }) => {
-  const gradientColor = colors[0] || '#440099';
-  const waveColor = colors[1] || '#fcc900';
+  const backgroundColor = colors[0] || '#000000';
+  const waveColors = [
+    'rgba(255,255,255,0.7)',
+    'rgba(255,255,255,0.5)',
+    'rgba(255,255,255,0.3)',
+    '#ffffff'
+  ];
 
   const waveStyle = `
-    @keyframes wave {
-      0%, 100% {
-        transform: translateY(0);
-      }
-      50% {
-        transform: translateY(-20px);
-      }
-    }
-
-    .wave-container {
+    .hero_area {
       position: relative;
-      width: 100%;
       height: 100%;
-      background-color: ${gradientColor};
-      overflow: hidden;
+      background-color: ${backgroundColor};
     }
-
-    .wave {
+    .waves {
       position: absolute;
-      left: 0;
-      right: 0;
+      width: 100%;
+      height: 15vh;
+      min-height: 100px;
+      max-height: 150px;
       bottom: 0;
-      height: 40%;
-      background-color: ${waveColor};
-    }
-
-    .wave::before,
-    .wave::after {
-      content: "";
-      position: absolute;
       left: 0;
-      right: 0;
-      bottom: 100%;
-      background-repeat: repeat-x;
     }
-
-    .wave::before {
-      height: 20px;
-      background-image: radial-gradient(circle at 10px -5px, transparent 12px, ${waveColor} 13px);
-      background-size: 20px 20px;
-      animation: wave ${animationDuration * 0.5}s ease-in-out infinite;
+    .parallax > use {
+      animation: move-forever ${animationDuration}s cubic-bezier(.55, .5, .45, .5) infinite;
       animation-play-state: ${isAnimationPaused ? 'paused' : 'running'};
     }
-
-    .wave::after {
-      height: 15px;
-      background-image: radial-gradient(circle at 10px -5px, transparent 12px, ${waveColor} 13px);
-      background-size: 40px 20px;
-      animation: wave ${animationDuration * 0.7}s ease-in-out infinite;
-      animation-play-state: ${isAnimationPaused ? 'paused' : 'running'};
-      opacity: 0.5;
+    .parallax > use:nth-child(1) {
+      animation-delay: -2s;
+      animation-duration: ${animationDuration * 0.28}s;
+    }
+    .parallax > use:nth-child(2) {
+      animation-delay: -3s;
+      animation-duration: ${animationDuration * 0.4}s;
+    }
+    .parallax > use:nth-child(3) {
+      animation-delay: -4s;
+      animation-duration: ${animationDuration * 0.52}s;
+    }
+    .parallax > use:nth-child(4) {
+      animation-delay: -5s;
+      animation-duration: ${animationDuration * 0.8}s;
+    }
+    @keyframes move-forever {
+      0% {
+        transform: translate3d(-90px, 0, 0);
+      }
+      100% {
+        transform: translate3d(85px, 0, 0);
+      }
+    }
+    @media (max-width: 768px) {
+      .waves {
+        height: 40px;
+        min-height: 40px;
+      }
     }
   `;
 
   return (
     <div className="w-full h-full">
       <style>{waveStyle}</style>
-      <div className="wave-container">
-        <div className="wave"></div>
+      <div className="hero_area">
+        <svg className="waves" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shapeRendering="auto">
+          <defs>
+            <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+          </defs>
+          <g className="parallax">
+            {waveColors.map((color, index) => (
+              <use key={index} xlinkHref="#gentle-wave" x="48" y={index * 2} fill={color} />
+            ))}
+          </g>
+        </svg>
       </div>
     </div>
   );
