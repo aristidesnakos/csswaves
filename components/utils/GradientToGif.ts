@@ -84,19 +84,36 @@ function renderHorizontalWave(ctx: CanvasRenderingContext2D, colors: string[], p
   ctx.fillStyle = colors[0];
   ctx.fillRect(0, 0, width, height);
 
-  // Wave
+  // Waves
   ctx.fillStyle = colors[1];
   const waveHeight = height * 0.4;
-  const frequency = 0.01;
-  const amplitude = 20;
+  const baseY = height - waveHeight;
 
+  // Render three waves with different frequencies and amplitudes
+  renderWave(ctx, width, height, baseY, progress, 0.02, 15, 0);
+  renderWave(ctx, width, height, baseY, progress, 0.03, 10, Math.PI / 2);
+  renderWave(ctx, width, height, baseY, progress, 0.01, 20, Math.PI / 4);
+}
+
+function renderWave(
+  ctx: CanvasRenderingContext2D, 
+  width: number, 
+  height: number, 
+  baseY: number, 
+  progress: number, 
+  frequency: number, 
+  amplitude: number, 
+  phaseShift: number
+) {
   ctx.beginPath();
-  ctx.moveTo(0, height);
+  ctx.moveTo(0, baseY);
   for (let x = 0; x < width; x++) {
-    const y = Math.sin((x + progress * width) * frequency) * amplitude + height - waveHeight;
+    const y = Math.sin((x * frequency + progress * Math.PI * 2 + phaseShift)) * amplitude + baseY;
     ctx.lineTo(x, y);
   }
+  ctx.lineTo(width, baseY);
   ctx.lineTo(width, height);
+  ctx.lineTo(0, height);
   ctx.closePath();
   ctx.fill();
 }
@@ -116,15 +133,30 @@ function renderCircularWave(ctx: CanvasRenderingContext2D, colors: string[], pro
   ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
   ctx.clip();
 
-  ctx.fillStyle = colors[1];
-  const waveRadius = radius * 1.2;
-  const frequency = 10;
-  const amplitude = 20;
+  // Render two overlapping circular waves
+  renderCircularWaveLayer(ctx, colors[1], centerX, centerY, radius, progress, 6, 15, 1);
+  renderCircularWaveLayer(ctx, colors[1] + '80', centerX, centerY, radius, -progress * 0.5, 8, 10, 0.7);
 
+  ctx.restore();
+}
+
+function renderCircularWaveLayer(
+  ctx: CanvasRenderingContext2D,
+  color: string,
+  centerX: number,
+  centerY: number,
+  radius: number,
+  progress: number,
+  frequency: number,
+  amplitude: number,
+  scale: number
+) {
+  ctx.fillStyle = color;
   ctx.beginPath();
   for (let angle = 0; angle < Math.PI * 2; angle += 0.01) {
-    const x = centerX + Math.cos(angle) * (waveRadius + Math.sin(angle * frequency + progress * Math.PI * 2) * amplitude);
-    const y = centerY + Math.sin(angle) * (waveRadius + Math.sin(angle * frequency + progress * Math.PI * 2) * amplitude);
+    const waveRadius = radius * scale + Math.sin(angle * frequency + progress * Math.PI * 2) * amplitude;
+    const x = centerX + Math.cos(angle) * waveRadius;
+    const y = centerY + Math.sin(angle) * waveRadius;
     if (angle === 0) {
       ctx.moveTo(x, y);
     } else {
@@ -132,5 +164,4 @@ function renderCircularWave(ctx: CanvasRenderingContext2D, colors: string[], pro
     }
   }
   ctx.fill();
-  ctx.restore();
 }

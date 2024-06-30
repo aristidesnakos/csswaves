@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { animationToGif } from './GradientToGif';
+import GIF from 'gif.js';
+import html2canvas from 'html2canvas';
 
 interface ExportGifProps {
   colors: string[];
@@ -19,24 +20,40 @@ const ExportGif: React.FC<ExportGifProps> = ({ colors, duration, animationType, 
     setError(null);
 
     try {
-      const blob = await animationToGif({
-        colors,
+      const gif = new GIF({
+        workers: 2,
+        quality: 10,
         width: animationRef.current.clientWidth,
         height: animationRef.current.clientHeight,
-        duration,
-        fps: 30,
-        animationType
+        workerScript: '/gif.worker.js'
       });
 
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `${animationType}-animation.gif`;
-      link.click();
+      const frames = 60; // Capture 60 frames for a smooth animation
+      const frameInterval = duration * 1000 / frames;
+
+      for (let i = 0; i < frames; i++) {
+        const canvas = await html2canvas(animationRef.current, {
+          scale: 1,
+          allowTaint: true,
+          useCORS: true
+        });
+        gif.addFrame(canvas, { delay: frameInterval, copy: true });
+        await new Promise(resolve => setTimeout(resolve, frameInterval));
+      }
+
+      gif.on('finished', (blob) => {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${animationType}-animation.gif`;
+        link.click();
+        setIsExporting(false);
+      });
+
+      gif.render();
     } catch (error) {
       console.error('Error exporting GIF:', error);
       setError('Failed to export GIF. Please try again.');
-    } finally {
       setIsExporting(false);
     }
   };
