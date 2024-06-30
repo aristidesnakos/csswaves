@@ -2,17 +2,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import GradientDisplay from './GradientDisplay';
 import ColorPickers from './ColorPickers';
-import BubbleSettings from './BubbleSettings';
 import AccessibilityControls from './AccessibilityControls';
 import AccessibilityScore from './AccessibilityScore';
-import ExportCode from '@/components/utils/ExportCode';
 import ExportGif from '@/components/utils/ExportGif';
 import { getContrastRatio } from '@/libs/utils';
 
 const GradientBackground: React.FC = () => {
   const [colors, setColors] = useState(['#ff00cc', '#3333ff']);
-  const [bubbleColor, setBubbleColor] = useState('#ffffff');
-  const [bubbleSpeed, setBubbleSpeed] = useState(1);
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
   const [isAnimationPaused, setIsAnimationPaused] = useState(false);
   const [accessibilityScore, setAccessibilityScore] = useState(0);
@@ -36,21 +32,16 @@ const GradientBackground: React.FC = () => {
 
   useEffect(() => {
     calculateAccessibilityScore();
-  }, [colors, bubbleColor, bubbleSpeed, isAnimationPaused]);
+  }, [colors, isAnimationPaused]);
 
   const calculateAccessibilityScore = () => {
     let score = 0;
 
     const contrastRatio = getContrastRatio(colors[0], colors[1]);
-    if (contrastRatio >= 4.5) score += 30;
-    else if (contrastRatio >= 3) score += 15;
+    if (contrastRatio >= 4.5) score += 50;
+    else if (contrastRatio >= 3) score += 25;
 
-    const bubbleContrastRatio = getContrastRatio(bubbleColor, colors[0]);
-    if (bubbleContrastRatio >= 4.5) score += 30;
-    else if (bubbleContrastRatio >= 3) score += 15;
-
-    if (bubbleSpeed <= 3) score += 20;
-    if (isAnimationPaused) score += 20;
+    if (isAnimationPaused) score += 50;
 
     setAccessibilityScore(score);
   };
@@ -62,20 +53,11 @@ const GradientBackground: React.FC = () => {
         <GradientDisplay
           ref={gradientRef}
           colors={colors}
-          bubbleColor={bubbleColor}
-          bubbleSpeed={bubbleSpeed}
-          containerSize={containerSize}
           isAnimationPaused={isAnimationPaused}
           animationDuration={animationDuration}
         />
         <div className='flex flex-col md:flex-row justify-between items-start gap-8 mb-8'>
           <ColorPickers colors={colors} setColors={setColors} />
-          <BubbleSettings
-            bubbleColor={bubbleColor}
-            setBubbleColor={setBubbleColor}
-            bubbleSpeed={bubbleSpeed}
-            setBubbleSpeed={setBubbleSpeed}
-          />
           <AccessibilityControls
             isAnimationPaused={isAnimationPaused}
             setIsAnimationPaused={setIsAnimationPaused}
@@ -97,8 +79,7 @@ const GradientBackground: React.FC = () => {
           <span>{animationDuration}s</span>
         </div>
         <AccessibilityScore score={accessibilityScore} />
-        <ExportCode colors={colors} animationDuration={animationDuration} />
-        <ExportGif targetId="gradient-display" duration={animationDuration} />
+        <ExportGif colors={colors} duration={animationDuration} />
       </div>
     </div>
   );
