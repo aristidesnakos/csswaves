@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, CSSProperties } from 'react';
 import BubbleAnimation from './BubbleAnimation';
 import styles from './GradientBackground.module.css';
 
@@ -8,13 +8,17 @@ interface GradientDisplayProps {
   bubbleSpeed: number;
   containerSize: { width: number; height: number };
   isAnimationPaused: boolean;
+  animationDuration: number;
 }
 
 const GradientDisplay = forwardRef<HTMLDivElement, GradientDisplayProps>(
-  ({ colors, bubbleColor, bubbleSpeed, containerSize, isAnimationPaused }, ref) => {
-    const gradientStyle = {
-      background: `linear-gradient(to right, ${colors[0]}, ${colors[1]})`,
-    };
+  ({ colors, bubbleColor, bubbleSpeed, containerSize, isAnimationPaused, animationDuration }, ref) => {
+    const gradientStyle: CSSProperties = {
+      background: `linear-gradient(-45deg, ${colors.join(', ')})`,
+      backgroundSize: '400% 400%',
+      animationPlayState: isAnimationPaused ? 'paused' : 'running',
+      '--animation-duration': `${animationDuration}s`,
+    } as CSSProperties;
 
     return (
       <div 
@@ -23,7 +27,7 @@ const GradientDisplay = forwardRef<HTMLDivElement, GradientDisplayProps>(
         id="gradient-display" 
         className={`${styles.animatedGradient} rounded-lg shadow-lg mb-8 relative overflow-hidden h-64`}
         role="img"
-        aria-label={`Gradient from ${colors[0]} to ${colors[1]} with ${bubbleColor} bubbles`}
+        aria-label={`Animated gradient with colors ${colors.join(', ')} and ${bubbleColor} bubbles`}
       >
         <BubbleAnimation 
           containerWidth={containerSize.width} 

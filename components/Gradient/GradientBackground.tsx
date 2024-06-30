@@ -5,6 +5,8 @@ import ColorPickers from './ColorPickers';
 import BubbleSettings from './BubbleSettings';
 import AccessibilityControls from './AccessibilityControls';
 import AccessibilityScore from './AccessibilityScore';
+import ExportCode from '@/components/utils/ExportCode';
+import ExportGif from '@/components/utils/ExportGif';
 import { getContrastRatio } from '@/libs/utils';
 
 const GradientBackground: React.FC = () => {
@@ -14,6 +16,7 @@ const GradientBackground: React.FC = () => {
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
   const [isAnimationPaused, setIsAnimationPaused] = useState(false);
   const [accessibilityScore, setAccessibilityScore] = useState(0);
+  const [animationDuration, setAnimationDuration] = useState(10);
   const gradientRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -63,6 +66,7 @@ const GradientBackground: React.FC = () => {
           bubbleSpeed={bubbleSpeed}
           containerSize={containerSize}
           isAnimationPaused={isAnimationPaused}
+          animationDuration={animationDuration}
         />
         <div className='flex flex-col md:flex-row justify-between items-start gap-8 mb-8'>
           <ColorPickers colors={colors} setColors={setColors} />
@@ -77,8 +81,24 @@ const GradientBackground: React.FC = () => {
             setIsAnimationPaused={setIsAnimationPaused}
           />
         </div>
-
+        <div className="mb-8">
+          <label htmlFor="animation-duration" className="block text-sm font-medium text-gray-700 mb-1">
+            Animation Duration (seconds)
+          </label>
+          <input
+            id="animation-duration"
+            type="range"
+            min="5"
+            max="30"
+            value={animationDuration}
+            onChange={(e) => setAnimationDuration(Number(e.target.value))}
+            className="w-full"
+          />
+          <span>{animationDuration}s</span>
+        </div>
         <AccessibilityScore score={accessibilityScore} />
+        <ExportCode colors={colors} animationDuration={animationDuration} />
+        <ExportGif targetId="gradient-display" duration={animationDuration} />
       </div>
     </div>
   );
