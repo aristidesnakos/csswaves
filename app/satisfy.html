@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SVG to PNG Export</title>
+  <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <svg id="mySvg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+    <circle cx="100" cy="100" r="75" fill="black"/>
+    <text x="100" y="130" font-family="'Comic Neue', sans-serif" font-size="80" font-weight="bold" text-anchor="middle" fill="white">SF</text>
+  </svg>
+  <br>
+  <button onclick="exportSVG()">Export as PNG</button>
+
+  <script>
+    function exportSVG() {
+      const svg = document.getElementById('mySvg');
+      const serializer = new XMLSerializer();
+      const svgString = serializer.serializeToString(svg);
+      const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+      const url = URL.createObjectURL(svgBlob);
+      
+      const image = new Image();
+      image.onload = function () {
+        const canvas = document.createElement('canvas');
+        canvas.width = svg.viewBox.baseVal.width;
+        canvas.height = svg.viewBox.baseVal.height;
+        const context = canvas.getContext('2d');
+        context.drawImage(image, 0, 0);
+        
+        const a = document.createElement('a');
+        a.href = canvas.toDataURL('image/png');
+        a.download = 'exported-image.png';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      };
+      image.src = url;
+    }
+  </script>
+</body>
+</html>
