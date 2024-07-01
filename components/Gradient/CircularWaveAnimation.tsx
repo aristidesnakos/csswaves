@@ -6,41 +6,56 @@ interface CircularWaveAnimationProps {
 }
 
 const CircularWaveAnimation: React.FC<CircularWaveAnimationProps> = ({ colors, animationDuration }) => {
-  const backgroundColor = colors[0] || '#2C74B3';
-  const waveColor = colors[1] || '#FFFFFF';
-
-  const waveStyle = `
-    @keyframes animate {
-      0% {
-        transform: translate(-50%, -75%) rotate(0deg);
-      }
-      100% {
-        transform: translate(-50%, -75%) rotate(360deg);
-      }
-    }
-  `;
-
   return (
-    <div className="relative w-64 h-64 mx-auto">
-      <style>{waveStyle}</style>
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-full border-5 border-white rounded-full overflow-hidden shadow-lg">
-        <div className="relative w-full h-full" style={{ background: backgroundColor }}>
-          <div 
-            className="absolute top-0 left-1/2 w-[200%] h-[200%] -translate-x-1/2 -translate-y-3/4 rounded-[45%]"
+    <div style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden', background: colors[0] }}>
+      <svg
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: '200%',
+          height: '200%',
+        }}
+        viewBox="0 0 100 100"
+        preserveAspectRatio="xMidYMid slice"
+      >
+        <defs>
+          <radialGradient id="circleGradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+            <stop offset="0%" stopColor={colors[1]} stopOpacity="1" />
+            <stop offset="100%" stopColor={colors[1]} stopOpacity="0" />
+          </radialGradient>
+        </defs>
+        <g>
+          <circle cx="50" cy="50" r="50" fill={colors[0]} />
+          <circle
+            cx="50"
+            cy="50"
+            r="40"
+            fill="url(#circleGradient)"
             style={{
-              background: waveColor,
-              animation: `animate ${animationDuration}s linear infinite`,
+              transformOrigin: 'center',
+              animation: `pulseAnimation ${animationDuration}s ease-in-out infinite`,
             }}
           />
-          <div 
-            className="absolute top-0 left-1/2 w-[200%] h-[200%] -translate-x-1/2 -translate-y-3/4 rounded-[40%]"
+          <circle
+            cx="50"
+            cy="50"
+            r="30"
+            fill="url(#circleGradient)"
             style={{
-              background: `${waveColor}80`,
-              animation: `animate ${animationDuration * 2}s linear infinite`,
+              transformOrigin: 'center',
+              animation: `pulseAnimation ${animationDuration * 0.75}s ease-in-out infinite`,
             }}
           />
-        </div>
-      </div>
+        </g>
+      </svg>
+      <style jsx>{`
+        @keyframes pulseAnimation {
+          0%, 100% { transform: scale(1); opacity: 1; }
+          50% { transform: scale(1.5); opacity: 0.5; }
+        }
+      `}</style>
     </div>
   );
 };

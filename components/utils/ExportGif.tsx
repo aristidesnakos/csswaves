@@ -1,42 +1,73 @@
 import React, { useState } from 'react';
-import { animationToGif } from './GradientToGif';
+import GIF from 'gif.js';
+import { renderGradientFrame, renderHorizontalWaveFrame, renderCircularWaveFrame } from './AnimationUtils';
 
 interface ExportGifProps {
   colors: string[];
   duration: number;
   animationType: 'gradient' | 'horizontalWave' | 'circularWave';
-  animationRef: React.RefObject<HTMLDivElement>;
+  canvasRef: React.RefObject<HTMLCanvasElement>;
 }
 
-const ExportGif: React.FC<ExportGifProps> = ({ colors, duration, animationType, animationRef }) => {
+const ExportGif: React.FC<ExportGifProps> = ({ colors, duration, animationType, canvasRef }) => {
   const [isExporting, setIsExporting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleExport = async () => {
-    if (!animationRef.current) return;
+    if (!canvasRef.current) return;
 
     setIsExporting(true);
     setError(null);
 
     try {
-      const blob = await animationToGif({
-        colors,
-        width: animationRef.current.clientWidth,
-        height: animationRef.current.clientHeight,
-        duration,
-        fps: 30,
-        animationType
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) throw new Error('Unable to get canvas context');
+
+      const fps = 30;
+      const frames = duration * fps;
+
+      const gif = new GIF({
+        workers: 2,
+        quality: 10,
+        width: canvas.width,
+        height: canvas.height,
+        workerScript: '/gif.worker.js',
       });
 
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `${animationType}-animation.gif`;
-      link.click();
+      const renderFrame = (progress: number) => {
+        switch (animationType) {
+          case 'gradient':
+            renderGradientFrame(ctx, colors, progress, canvas.width, canvas.height);
+            break;
+          case 'horizontalWave':
+            renderHorizontalWaveFrame(ctx, colors, progress, canvas.width, canvas.height);
+            break;
+          case 'circularWave':
+            renderCircularWaveFrame(ctx, colors, progress, canvas.width, canvas.height);
+            break;
+        }
+      };
+
+      for (let i = 0; i < frames; i++) {
+        const progress = i / frames;
+        renderFrame(progress);
+        gif.addFrame(ctx, { copy: true, delay: 1000 / fps });
+      }
+
+      gif.on('finished', (blob: Blob) => {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${animationType}-animation.gif`;
+        link.click();
+        setIsExporting(false);
+      });
+
+      gif.render();
     } catch (error) {
       console.error('Error exporting GIF:', error);
       setError('Failed to export GIF. Please try again.');
-    } finally {
       setIsExporting(false);
     }
   };

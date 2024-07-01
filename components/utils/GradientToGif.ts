@@ -8,7 +8,7 @@ interface AnimationToGifOptions {
   height: number;
   duration: number;
   fps: number;
-  animationType: 'gradient' | 'horizontalWave' | 'circularWave';
+  animationType: string;
 }
 
 export async function animationToGif({
@@ -19,44 +19,43 @@ export async function animationToGif({
   fps,
   animationType
 }: AnimationToGifOptions): Promise<Blob> {
-  return new Promise(async (resolve, reject) => {
-    const gif = new GIF({
-      workers: 2,
-      quality: 10,
+  const gif = new GIF({
+    workers: 2,
+    quality: 10,
+    width,
+    height,
+    workerScript: '/gif.worker.js',
+  });
+
+  const frames = duration * fps;
+  const interval = 1000 / fps;
+
+  console.log(`Starting GIF generation: ${frames} frames, ${duration}s duration, ${fps} fps`);
+
+  for (let i = 0; i < frames; i++) {
+    const progress = i / frames;
+
+    const imageDataUrl = await reactComponentToImage(
+      CircularWaveAnimation,
+      { colors, progress },
       width,
-      height,
-      workerScript: '/gif.worker.js',
+      height
+    );
+
+    const img = await new Promise<HTMLImageElement>((resolve) => {
+      const image = new Image();
+      image.onload = () => resolve(image);
+      image.src = imageDataUrl;
     });
 
-    const frames = duration * fps;
-    const interval = 1000 / fps;
+    gif.addFrame(img, { delay: interval });
 
-    console.log(`Starting GIF generation: ${frames} frames, ${duration}s duration, ${fps} fps`);
+    console.log(`Added frame ${i + 1}/${frames}`);
+  }
 
-    for (let i = 0; i < frames; i++) {
-      const progress = i / frames;
-
-      const imageDataUrl = await reactComponentToImage(
-        CircularWaveAnimation,
-        { colors, progress },
-        width,
-        height
-      );
-
-      const img = new Image();
-      img.src = imageDataUrl;
-      await new Promise(resolve => img.onload = resolve);
-
-      gif.addFrame(img, { delay: interval });
-
-      console.log(`Added frame ${i + 1}/${frames}`);
-    }
-
-    gif.on('finished', (blob: Blob) => {
-      console.log('GIF generation finished, blob size:', blob.size);
-      resolve(blob);
-    });
-
+  return new Promise((resolve, reject) => {
+    gif.on('finished', resolve);
+    gif.on('error', reject);
     gif.render();
   });
 }

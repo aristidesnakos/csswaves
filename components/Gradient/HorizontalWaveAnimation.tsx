@@ -5,83 +5,51 @@ interface HorizontalWaveAnimationProps {
   animationDuration: number;
 }
 
-const HorizontalWaveAnimation: React.FC<HorizontalWaveAnimationProps> = ({ 
-  colors, 
-  animationDuration,
-}) => {
-  const backgroundColor = colors[0] || '#000000';
-  const waveColors = [
-    'rgba(255,255,255,0.7)',
-    'rgba(255,255,255,0.5)',
-    'rgba(255,255,255,0.3)',
-    '#ffffff'
-  ];
-
-  const waveStyle = `
-    .hero_area {
-      position: relative;
-      height: 100%;
-      background-color: ${backgroundColor};
-    }
-    .waves {
-      position: absolute;
-      width: 100%;
-      height: 15vh;
-      min-height: 100px;
-      max-height: 150px;
-      bottom: 0;
-      left: 0;
-    }
-    .parallax > use {
-      animation: move-forever ${animationDuration}s cubic-bezier(.55, .5, .45, .5) infinite;
-    }
-    .parallax > use:nth-child(1) {
-      animation-delay: -2s;
-      animation-duration: ${animationDuration * 0.28}s;
-    }
-    .parallax > use:nth-child(2) {
-      animation-delay: -3s;
-      animation-duration: ${animationDuration * 0.4}s;
-    }
-    .parallax > use:nth-child(3) {
-      animation-delay: -4s;
-      animation-duration: ${animationDuration * 0.52}s;
-    }
-    .parallax > use:nth-child(4) {
-      animation-delay: -5s;
-      animation-duration: ${animationDuration * 0.8}s;
-    }
-    @keyframes move-forever {
-      0% {
-        transform: translate3d(-90px, 0, 0);
-      }
-      100% {
-        transform: translate3d(85px, 0, 0);
-      }
-    }
-    @media (max-width: 768px) {
-      .waves {
-        height: 40px;
-        min-height: 40px;
-      }
-    }
-  `;
-
+const HorizontalWaveAnimation: React.FC<HorizontalWaveAnimationProps> = ({ colors, animationDuration }) => {
   return (
-    <div className="w-full h-full">
-      <style>{waveStyle}</style>
-      <div className="hero_area">
-        <svg className="waves" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shapeRendering="auto">
-          <defs>
-            <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
-          </defs>
-          <g className="parallax">
-            {waveColors.map((color, index) => (
-              <use key={index} xlinkHref="#gentle-wave" x="48" y={index * 2} fill={color} />
-            ))}
-          </g>
-        </svg>
-      </div>
+    <div style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden', background: colors[0] }}>
+      <svg
+        style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          width: '200%',
+          height: '100%',
+          animation: `waveAnimation ${animationDuration}s linear infinite`,
+        }}
+        viewBox="0 0 1440 320"
+        preserveAspectRatio="none"
+      >
+        <path
+          fill={colors[1]}
+          fillOpacity="1"
+          d="M0,192L48,197.3C96,203,192,213,288,229.3C384,245,480,267,576,250.7C672,235,768,181,864,181.3C960,181,1056,235,1152,234.7C1248,235,1344,181,1392,154.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+        ></path>
+      </svg>
+      <svg
+        style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          width: '200%',
+          height: '100%',
+          animation: `waveAnimation ${animationDuration * 0.75}s linear infinite`,
+        }}
+        viewBox="0 0 1440 320"
+        preserveAspectRatio="none"
+      >
+        <path
+          fill={colors[1]}
+          fillOpacity="0.5"
+          d="M0,320L48,288C96,256,192,192,288,176C384,160,480,192,576,208C672,224,768,224,864,213.3C960,203,1056,181,1152,170.7C1248,160,1344,160,1392,160L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+        ></path>
+      </svg>
+      <style jsx>{`
+        @keyframes waveAnimation {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+      `}</style>
     </div>
   );
 };

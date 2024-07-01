@@ -1,12 +1,9 @@
 'use client';
-import React, { useState, useRef } from 'react';
-import GradientDisplay from './GradientDisplay';
-import HorizontalWaveAnimation from './HorizontalWaveAnimation';
-import CircularWaveAnimation from './CircularWaveAnimation';
+import React, { useState, useRef, useEffect } from 'react';
 import ColorPickers from './ColorPickers';
 import ExportCode from '@/components/utils/ExportCode';
 import ExportGif from '@/components/utils/ExportGif';
-import { toPng } from 'html-to-image';
+import { renderGradientFrame, renderHorizontalWaveFrame, renderCircularWaveFrame } from '@/components/utils/AnimationUtils';
 
 type AnimationType = 'gradient' | 'horizontalWave' | 'circularWave';
 
@@ -14,40 +11,50 @@ const GradientBackground: React.FC = () => {
   const [colors, setColors] = useState(['#ff00cc', '#3333ff']);
   const [animationDuration, setAnimationDuration] = useState(10);
   const [animationType, setAnimationType] = useState<AnimationType>('gradient');
-  const animationRef = useRef<HTMLDivElement>(null);
-  const [isExporting, setIsExporting] = useState(false);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const renderAnimation = () => {
-    switch (animationType) {
-      case 'gradient':
-        return <GradientDisplay colors={colors} animationDuration={animationDuration} />;
-      case 'horizontalWave':
-        return <HorizontalWaveAnimation colors={colors} animationDuration={animationDuration} />;
-      case 'circularWave':
-        return <CircularWaveAnimation colors={colors} animationDuration={animationDuration} />;
-    }
-  };
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
 
-  const exportPNG = async () => {
-    if (animationRef.current) {
-      try {
-        setIsExporting(true);
-        const dataUrl = await toPng(animationRef.current, { quality: 0.95 });
-        const link = document.createElement('a');
-        link.download = `${animationType}-animation.png`;
-        link.href = dataUrl;
-        link.click();
-      } catch (error) {
-        console.error('Error exporting PNG:', error);
-      } finally {
-        setIsExporting(false);
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let animationFrameId: number;
+    let startTime: number;
+
+    const render = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const progress = ((timestamp - startTime) / 1000 / animationDuration) % 1;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      switch (animationType) {
+        case 'gradient':
+          renderGradientFrame(ctx, colors, progress, canvas.width, canvas.height);
+          break;
+        case 'horizontalWave':
+          renderHorizontalWaveFrame(ctx, colors, progress, canvas.width, canvas.height);
+          break;
+        case 'circularWave':
+          renderCircularWaveFrame(ctx, colors, progress, canvas.width, canvas.height);
+          break;
       }
-    }
-  };
+
+      animationFrameId = requestAnimationFrame(render);
+    };
+
+    animationFrameId = requestAnimationFrame(render);
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, [colors, animationDuration, animationType]);
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-4xl mx-auto">
+        {/* Animation type selection */}
         <div className="mb-8">
           <h3 className="text-lg font-semibold mb-4">Select Animation Type</h3>
           <div className="flex gap-4">
@@ -74,10 +81,17 @@ const GradientBackground: React.FC = () => {
           </div>
         </div>
         
-        <div className="mb-8 h-64 relative overflow-hidden rounded-lg shadow-lg" ref={animationRef}>
-          {renderAnimation()}
+        {/* Animation display */}
+        <div className="mb-8 h-64 relative overflow-hidden rounded-lg shadow-lg">
+          <canvas
+            ref={canvasRef}
+            width={640}
+            height={256}
+            className="w-full h-full"
+          />
         </div>
         
+        {/* Color pickers and duration slider */}
         <div className='flex flex-col md:flex-row justify-between items-start gap-8 mb-8'>
           <ColorPickers colors={colors} setColors={setColors} />
           <div className="flex-grow">
@@ -97,22 +111,17 @@ const GradientBackground: React.FC = () => {
           </div>
         </div>
         
+        {/* Export buttons */}
         <div className="flex gap-4 mb-4">
-          <button 
-            onClick={exportPNG} 
-            disabled={isExporting}
-            className="px-6 py-2 mt-4 font-semibold text-white bg-blue-500 rounded-lg shadow-lg disabled:bg-blue-300 hover:bg-blue-600 transition-colors"
-          >
-            {isExporting ? 'Exporting...' : 'Export as PNG'}
-          </button>
           <ExportGif
             colors={colors}
             duration={animationDuration}
             animationType={animationType}
-            animationRef={animationRef}
+            canvasRef={canvasRef}
           />
         </div>
         
+        {/* Export code */}
         <ExportCode colors={colors} animationDuration={animationDuration} animationType={animationType} />
       </div>
     </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { toPng } from 'html-to-image';
 
 export async function reactComponentToImage(
@@ -16,14 +16,18 @@ export async function reactComponentToImage(
     container.style.left = '-9999px';
     document.body.appendChild(container);
 
-    ReactDOM.render(React.createElement(Component, props), container, async () => {
+    const root = createRoot(container);
+    root.render(React.createElement(Component, props));
+
+    // Wait for the next frame to ensure the component has rendered
+    requestAnimationFrame(async () => {
       try {
         const dataUrl = await toPng(container, { width, height });
         resolve(dataUrl);
       } catch (error) {
         reject(error);
       } finally {
-        ReactDOM.unmountComponentAtNode(container);
+        root.unmount();
         document.body.removeChild(container);
       }
     });
