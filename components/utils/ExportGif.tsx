@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import GIF from 'gif.js';
-import { renderGradientFrame, renderHorizontalWaveFrame, renderCircularWaveFrame } from './AnimationUtils';
+import { renderGradientFrame, renderHorizontalWaveFrame, renderCircularWaveFrame, renderTsunamiWaveFrame } from './AnimationUtils';
 
 interface ExportGifProps {
   colors: string[];
   duration: number;
-  animationType: 'Gradient' | 'Horizontal Wave' | 'Circular Wave';
+  animationType: 'Gradient' | 'Horizontal Wave' | 'Circular Wave' | 'Tsunami';
   canvasRef: React.RefObject<HTMLCanvasElement>;
 }
 
@@ -33,7 +33,7 @@ const ExportGif: React.FC<ExportGifProps> = ({ colors, duration, animationType, 
         width: canvas.width,
         height: canvas.height,
         workerScript: '/gif.worker.js',
-        repeat: 0  // Add this line to make the GIF loop indefinitely
+        repeat: 0
       });
 
       const renderFrame = (progress: number) => {
@@ -46,6 +46,9 @@ const ExportGif: React.FC<ExportGifProps> = ({ colors, duration, animationType, 
             break;
           case 'Circular Wave':
             renderCircularWaveFrame(ctx, colors, progress, canvas.width, canvas.height);
+            break;
+          case 'Tsunami':
+            renderTsunamiWaveFrame(ctx, colors, progress, canvas.width, canvas.height);
             break;
         }
       };

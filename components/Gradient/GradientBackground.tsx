@@ -3,9 +3,9 @@ import React, { useState, useRef, useEffect } from 'react';
 import ColorPickers from './ColorPickers';
 import ExportCode from '@/components/utils/ExportCode';
 import ExportGif from '@/components/utils/ExportGif';
-import { renderGradientFrame, renderHorizontalWaveFrame, renderCircularWaveFrame } from '@/components/utils/AnimationUtils';
+import { renderGradientFrame, renderHorizontalWaveFrame, renderCircularWaveFrame, renderTsunamiWaveFrame } from '@/components/utils/AnimationUtils';
 
-type AnimationType = 'Gradient' | 'Horizontal Wave' | 'Circular Wave';
+type AnimationType = 'Gradient' | 'Horizontal Wave' | 'Circular Wave' | 'Tsunami';
 
 const GradientBackground: React.FC = () => {
   const [colors, setColors] = useState(['#2C74B3', '#FFFFFF']);
@@ -50,6 +50,9 @@ const GradientBackground: React.FC = () => {
         case 'Circular Wave':
           renderCircularWaveFrame(ctx, colors, progress, width, height);
           break;
+        case 'Tsunami':
+          renderTsunamiWaveFrame(ctx, colors, progress, width, height);
+          break;
       }
 
       animationFrameId = requestAnimationFrame(render);
@@ -73,7 +76,8 @@ const GradientBackground: React.FC = () => {
             {[
               { type: 'Gradient', icon: '🌈' },
               { type: 'Horizontal Wave', icon: '🌊' },
-              { type: 'Circular Wave', icon: '🌀' }
+              { type: 'Circular Wave', icon: '🌀' },
+              { type: 'Tsunami', icon: '🌊' }
             ].map(({ type, icon }) => (
               <label key={type} className="flex flex-col items-center">
                 <input
