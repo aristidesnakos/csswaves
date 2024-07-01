@@ -20,11 +20,11 @@ const ExportCode: React.FC<ExportCodeProps> = ({ colors, animationDuration, anim
   background-size: 400% 400%;
   animation: gradientAnimation ${animationDuration}s ease infinite;
 `,
-      horizontalWave: `
+      standingWave: `
   position: relative;
   background-color: ${colors[0]};
 `,
-      circularWave: `
+      tsunami: `
   position: relative;
   background: ${colors[0]};
   border-radius: 50%;
@@ -39,12 +39,12 @@ const ExportCode: React.FC<ExportCodeProps> = ({ colors, animationDuration, anim
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }`,
-      horizontalWave: `
+      standingWave: `
 @keyframes wave {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-20px); }
 }`,
-      circularWave: `
+      tsunami: `
 @keyframes animate {
   0% { transform: translate(-50%, -75%) rotate(0deg); }
   100% { transform: translate(-50%, -75%) rotate(360deg); }
