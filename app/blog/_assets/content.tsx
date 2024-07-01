@@ -1,7 +1,7 @@
 import type { JSX } from "react";
 import Image, { StaticImageData } from "next/image";
-import marcImg from "@/app/blog/_assets/images/authors/marc.png";
-import introducingSupabaseImg from "@/public/blog/introducing-supabase/header.png";
+import ariImg from "@/app/blog/_assets/images/authors/ari.jpeg";
+import introducingSoFaastImg from "@/public/blog/introducing-sofaast/icon.png";
 
 // ==================================================================================================================================================================
 // BLOG CATEGORIES 🏷️
@@ -140,7 +140,7 @@ export const authors: authorType[] = [
     description:
       "Marc is a developer and an entrepreneur. He's built 20 startups in the last 3 years. 6 were profitable and 3 were acquired. He's currently building ByeDispute, the #1 Stripe Chargebacks Protection tool.",
     // The avatar of the author to display in the author's bio and avatar badge. It's better to use a local image, but you can also use an external image (https://...)
-    avatar: marcImg,
+    avatar: ariImg,
     // A list of social links to display in the author's bio.
     socials: [
       {
