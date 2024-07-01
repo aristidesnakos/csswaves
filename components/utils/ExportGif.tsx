@@ -5,7 +5,7 @@ import { renderGradientFrame, renderHorizontalWaveFrame, renderCircularWaveFrame
 interface ExportGifProps {
   colors: string[];
   duration: number;
-  animationType: 'Gradient' | 'Horizontal Wave' | 'Circular Wave' | 'Tsunami';
+  animationType: 'gradient' | 'ripples' | 'standingWave' | 'tsunami';
   canvasRef: React.RefObject<HTMLCanvasElement>;
 }
 
@@ -38,16 +38,16 @@ const ExportGif: React.FC<ExportGifProps> = ({ colors, duration, animationType, 
 
       const renderFrame = (progress: number) => {
         switch (animationType) {
-          case 'Gradient':
+          case 'gradient':
             renderGradientFrame(ctx, colors, progress, canvas.width, canvas.height);
             break;
-          case 'Horizontal Wave':
+          case 'ripples':
             renderHorizontalWaveFrame(ctx, colors, progress, canvas.width, canvas.height);
             break;
-          case 'Circular Wave':
+          case 'standingWave':
             renderCircularWaveFrame(ctx, colors, progress, canvas.width, canvas.height);
             break;
-          case 'Tsunami':
+          case 'tsunami':
             renderTsunamiWaveFrame(ctx, colors, progress, canvas.width, canvas.height);
             break;
         }

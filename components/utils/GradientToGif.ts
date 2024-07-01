@@ -1,6 +1,6 @@
 import GIF from 'gif.js';
 import { reactComponentToImage } from '@/components/utils/ReactToImage';
-import CircularWaveAnimation from '@/components/Gradient/CircularWaveAnimation';
+import CircularWaveAnimation from '@/components/graphics/CircularWaveAnimation';
 
 interface AnimationToGifOptions {
   colors: string[];

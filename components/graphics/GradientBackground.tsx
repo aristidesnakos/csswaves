@@ -5,12 +5,12 @@ import ExportCode from '@/components/utils/ExportCode';
 import ExportGif from '@/components/utils/ExportGif';
 import { renderGradientFrame, renderHorizontalWaveFrame, renderCircularWaveFrame, renderTsunamiWaveFrame } from '@/components/utils/AnimationUtils';
 
-type AnimationType = 'Gradient' | 'Horizontal Wave' | 'Circular Wave' | 'Tsunami';
+type AnimationType = 'gradient' | 'ripples' | 'standingWave' | 'tsunami';
 
 const GradientBackground: React.FC = () => {
   const [colors, setColors] = useState(['#2C74B3', '#FFFFFF']);
   const [animationDuration, setAnimationDuration] = useState(10);
-  const [animationType, setAnimationType] = useState<AnimationType>('Circular Wave');
+  const [animationType, setAnimationType] = useState<AnimationType>('standingWave');
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -41,16 +41,16 @@ const GradientBackground: React.FC = () => {
       const { width, height } = canvas.getBoundingClientRect();
 
       switch (animationType) {
-        case 'Gradient':
+        case 'gradient':
           renderGradientFrame(ctx, colors, progress, width, height);
           break;
-        case 'Horizontal Wave':
+        case 'ripples':
           renderHorizontalWaveFrame(ctx, colors, progress, width, height);
           break;
-        case 'Circular Wave':
+        case 'standingWave':
           renderCircularWaveFrame(ctx, colors, progress, width, height);
           break;
-        case 'Tsunami':
+        case 'tsunami':
           renderTsunamiWaveFrame(ctx, colors, progress, width, height);
           break;
       }
@@ -74,10 +74,10 @@ const GradientBackground: React.FC = () => {
           <h3 className="text-lg font-semibold mb-4">Select Animation Type</h3>
           <div className="flex gap-4">
             {[
-              { type: 'Gradient', icon: '🌈' },
-              { type: 'Horizontal Wave', icon: '🌊' },
-              { type: 'Circular Wave', icon: '🌀' },
-              { type: 'Tsunami', icon: '🌊' }
+              { type: 'gradient', icon: '🌈' },
+              { type: 'ripples', icon: '🌊' },
+              { type: 'standingWave', icon: '🌀' },
+              { type: 'tsunami', icon: '🌊' }
             ].map(({ type, icon }) => (
               <label key={type} className="flex flex-col items-center">
                 <input
