@@ -32,32 +32,38 @@ export async function animationToGif({
 
   console.log(`Starting GIF generation: ${frames} frames, ${duration}s duration, ${fps} fps`);
 
-  for (let i = 0; i < frames; i++) {
-    const progress = i / frames;
+  try {
+    for (let i = 0; i < frames; i++) {
+      const progress = i / frames;
 
-    const imageDataUrl = await reactComponentToImage(
-      CircularWaveAnimation,
-      { colors, progress },
-      width,
-      height
-    );
+      const imageDataUrl = await reactComponentToImage(
+        CircularWaveAnimation,
+        { colors, progress },
+        width,
+        height
+      );
 
-    const img = await new Promise<HTMLImageElement>((resolve) => {
-      const image = new Image();
-      image.onload = () => resolve(image);
-      image.src = imageDataUrl;
+      const img = await new Promise<HTMLImageElement>((resolve) => {
+        const image = new Image();
+        image.onload = () => resolve(image);
+        image.src = imageDataUrl;
+      });
+
+      gif.addFrame(img, { delay: interval });
+
+      console.log(`Added frame ${i + 1}/${frames}`);
+    }
+
+    return new Promise((resolve, reject) => {
+      gif.on('finished', (blob: Blob) => {
+        resolve(blob);
+      });
+      gif.render();
     });
-
-    gif.addFrame(img, { delay: interval });
-
-    console.log(`Added frame ${i + 1}/${frames}`);
+  } catch (error) {
+    console.error('Error generating GIF:', error);
+    throw error;
   }
-
-  return new Promise((resolve, reject) => {
-    gif.on('finished', resolve);
-    gif.on('error', reject);
-    gif.render();
-  });
 }
 
 function renderFrame(
