@@ -1,4 +1,6 @@
 import GIF from 'gif.js';
+import { reactComponentToImage } from '@/components/utils/ReactToImage';
+import CircularWaveAnimation from '@/components/Gradient/CircularWaveAnimation';
 
 interface AnimationToGifOptions {
   colors: string[];
@@ -17,30 +19,41 @@ export async function animationToGif({
   fps,
   animationType
 }: AnimationToGifOptions): Promise<Blob> {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     const gif = new GIF({
       workers: 2,
       quality: 10,
       width,
       height,
-      workerScript: '/gif.worker.js'
+      workerScript: '/gif.worker.js',
     });
-
-    const canvas = document.createElement('canvas');
-    canvas.width = width;
-    canvas.height = height;
-    const ctx = canvas.getContext('2d')!;
 
     const frames = duration * fps;
     const interval = 1000 / fps;
 
+    console.log(`Starting GIF generation: ${frames} frames, ${duration}s duration, ${fps} fps`);
+
     for (let i = 0; i < frames; i++) {
       const progress = i / frames;
-      renderFrame(ctx, colors, progress, width, height, animationType);
-      gif.addFrame(ctx, { copy: true, delay: interval });
+
+      const imageDataUrl = await reactComponentToImage(
+        CircularWaveAnimation,
+        { colors, progress },
+        width,
+        height
+      );
+
+      const img = new Image();
+      img.src = imageDataUrl;
+      await new Promise(resolve => img.onload = resolve);
+
+      gif.addFrame(img, { delay: interval });
+
+      console.log(`Added frame ${i + 1}/${frames}`);
     }
 
     gif.on('finished', (blob: Blob) => {
+      console.log('GIF generation finished, blob size:', blob.size);
       resolve(blob);
     });
 
@@ -103,41 +116,43 @@ function renderHorizontalWave(ctx: CanvasRenderingContext2D, colors: string[], p
 }
 
 function renderCircularWave(ctx: CanvasRenderingContext2D, colors: string[], progress: number, width: number, height: number) {
-  const backgroundColor = colors[0] || '#2C74B3';
-  const waveColor = colors[1] || '#FFFFFF';
+  const backgroundColor = colors[0];
+  const waveColor = colors[1];
+
+  const centerX = width / 2;
+  const centerY = height / 2;
+  const size = Math.min(width, height);
+  const radius = size / 2;
 
   // Background
   ctx.fillStyle = backgroundColor;
   ctx.fillRect(0, 0, width, height);
 
-  const centerX = width / 2;
-  const centerY = height / 2;
-  const size = Math.min(width, height);
-
-  ctx.save();
-  ctx.translate(centerX, centerY);
-
   // Clip to a circle
+  ctx.save();
   ctx.beginPath();
-  ctx.arc(0, 0, size / 2, 0, Math.PI * 2);
+  ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
   ctx.clip();
 
-  // Draw two rotating ellipses
-  for (let i = 0; i < 2; i++) {
+  // Function to draw a wave
+  const drawWave = (offset: number, alpha: number) => {
+    const angle = progress * Math.PI * 2 + offset;
     ctx.save();
-    
-    // Rotate based on progress
-    const rotation = (progress * Math.PI * 2) + (i * Math.PI / 2);
-    ctx.rotate(rotation);
+    ctx.translate(centerX, centerY);
+    ctx.rotate(angle);
+    ctx.scale(1, 0.75);  // To create an ellipse effect
 
-    // Draw ellipse
     ctx.beginPath();
-    ctx.ellipse(0, 0, size * 0.6, size * 0.5, 0, 0, Math.PI * 2);
-    ctx.fillStyle = i === 0 ? waveColor : `${waveColor}80`;
+    ctx.arc(0, 0, radius * 2, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(${parseInt(waveColor.slice(1, 3), 16)}, ${parseInt(waveColor.slice(3, 5), 16)}, ${parseInt(waveColor.slice(5, 7), 16)}, ${alpha})`;
     ctx.fill();
 
     ctx.restore();
-  }
+  };
+
+  // Draw two waves
+  drawWave(0, 1);
+  drawWave(Math.PI, 0.5);
 
   ctx.restore();
 }
