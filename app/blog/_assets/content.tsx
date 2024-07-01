@@ -131,14 +131,14 @@ const authorSlugs: {
 export const authors: authorType[] = [
   {
     // The slug to use in the URL, from the authorSlugs object above.
-    slug: authorSlugs.marc,
+    slug: authorSlugs.ari,
     // The name to display in the author's bio. Up to 60 characters.
-    name: "Marc Lou",
+    name: "Ari",
     // The job to display in the author's bio. Up to 60 characters.
-    job: "Maker of ByeDispute",
+    job: "Maker of SoFaast",
     // The description of the author to display in the author's bio. Up to 160 characters.
     description:
-      "Marc is a developer and an entrepreneur. He's built 20 startups in the last 3 years. 6 were profitable and 3 were acquired. He's currently building ByeDispute, the #1 Stripe Chargebacks Protection tool.",
+      "Ari is a developer and an entrepreneur. He's built 20 startups in the last 3 years.",
     // The avatar of the author to display in the author's bio and avatar badge. It's better to use a local image, but you can also use an external image (https://...)
     avatar: ariImg,
     // A list of social links to display in the author's bio.
@@ -146,17 +146,12 @@ export const authors: authorType[] = [
       {
         name: socialIcons.twitter.name,
         icon: socialIcons.twitter.svg,
-        url: "https://twitter.com/marc_louvion",
+        url: "https://twitter.com/just_aristides",
       },
       {
         name: socialIcons.linkedin.name,
         icon: socialIcons.linkedin.svg,
-        url: "https://www.linkedin.com/in/marclouvion/",
-      },
-      {
-        name: socialIcons.github.name,
-        icon: socialIcons.github.svg,
-        url: "https://github.com/Marc-Lou-Org/ship-fast",
+        url: "https://www.linkedin.com/in/aristidesnakos/",
       },
     ],
   },
@@ -216,7 +211,7 @@ export const articles: articleType[] = [
     publishedAt: "2023-11-20",
     image: {
       // The image to display in <CardArticle /> components.
-      src: introducingSupabaseImg,
+      src: introducingSoFaastImg,
       // The relative URL of the same image to use in the Open Graph meta tags & the Schema Markup JSON-LD. It should be the same image as the src above.
       urlRelative: "/blog/introducing-supabase/header.jpg",
       alt: "Supabase and ShipFast logo combined",
@@ -225,8 +220,8 @@ export const articles: articleType[] = [
     content: (
       <>
         <Image
-          src={introducingSupabaseImg}
-          alt="Supabase and ShipFast logo combined"
+          src={introducingSoFaastImg}
+          alt="SoFaast logo"
           width={700}
           height={500}
           priority={true}
