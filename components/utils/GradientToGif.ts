@@ -120,7 +120,7 @@ function renderHorizontalWave(ctx: CanvasRenderingContext2D, colors: string[], p
   ctx.fill();
 }
 
-export function renderCircularWaveFrame(
+export function renderCircularWave(
   ctx: CanvasRenderingContext2D,
   colors: string[],
   progress: number,
