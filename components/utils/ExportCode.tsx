@@ -3,7 +3,7 @@ import React from 'react';
 interface ExportCodeProps {
   colors: string[];
   animationDuration: number;
-  animationType: 'gradient' | 'horizontalWave' | 'circularWave';
+  animationType: 'gradient' | 'standingWave' | 'tsunami';
 }
 
 const ExportCode: React.FC<ExportCodeProps> = ({ colors, animationDuration, animationType }) => {
@@ -58,13 +58,13 @@ const ExportCode: React.FC<ExportCodeProps> = ({ colors, animationDuration, anim
 
 ${keyframes[animationType]}
 
-${animationType === 'horizontalWave' || animationType === 'circularWave' ? `
+${animationType === 'standingWave' || animationType === 'tsunami' ? `
 .${animationType}-animation::before,
 .${animationType}-animation::after {
   content: '';
   position: absolute;
   background: ${colors[1]};
-  animation: ${animationType === 'horizontalWave' ? 'wave' : 'animate'} ${animationDuration}s linear infinite;
+  animation: ${animationType === 'standingWave' ? 'wave' : 'animate'} ${animationDuration}s linear infinite;
 }
 ` : ''}`;
   };
