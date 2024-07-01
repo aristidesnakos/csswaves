@@ -120,44 +120,85 @@ function renderHorizontalWave(ctx: CanvasRenderingContext2D, colors: string[], p
   ctx.fill();
 }
 
-function renderCircularWave(ctx: CanvasRenderingContext2D, colors: string[], progress: number, width: number, height: number) {
-  const backgroundColor = colors[0];
-  const waveColor = colors[1];
-
+export function renderCircularWaveFrame(
+  ctx: CanvasRenderingContext2D,
+  colors: string[],
+  progress: number,
+  width: number,
+  height: number
+) {
   const centerX = width / 2;
   const centerY = height / 2;
-  const size = Math.min(width, height);
-  const radius = size / 2;
+  const radius = Math.min(width, height) * 0.4;
 
-  // Background
-  ctx.fillStyle = backgroundColor;
-  ctx.fillRect(0, 0, width, height);
+  // Clear the canvas
+  ctx.clearRect(0, 0, width, height);
 
-  // Clip to a circle
+  // Create a clipping region for the circle
   ctx.save();
   ctx.beginPath();
   ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
   ctx.clip();
 
-  // Function to draw a wave
-  const drawWave = (offset: number, alpha: number) => {
-    const angle = progress * Math.PI * 2 + offset;
-    ctx.save();
-    ctx.translate(centerX, centerY);
-    ctx.rotate(angle);
-    ctx.scale(1, 0.75);  // To create an ellipse effect
+  // Fill the background (representing the goblet)
+  ctx.fillStyle = colors[0];
+  ctx.fillRect(0, 0, width, height);
 
-    ctx.beginPath();
-    ctx.arc(0, 0, radius * 2, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(${parseInt(waveColor.slice(1, 3), 16)}, ${parseInt(waveColor.slice(3, 5), 16)}, ${parseInt(waveColor.slice(5, 7), 16)}, ${alpha})`;
-    ctx.fill();
-
-    ctx.restore();
+  // Function to convert hex to rgba
+  const hexToRgba = (hex: string, alpha: number) => {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
   };
 
-  // Draw two waves
-  drawWave(0, 1);
-  drawWave(Math.PI, 0.5);
+  // Draw the "wine" waves
+  const drawWine = () => {
+    const waveColor = hexToRgba(colors[1], 0.8);
+    ctx.fillStyle = waveColor;
 
+    ctx.beginPath();
+    for (let angle = 0; angle < Math.PI * 2; angle += 0.01) {
+      const sineWave = Math.sin(angle * 4 + progress * Math.PI * 2) * 0.05;
+      const r = radius * (0.8 + sineWave);
+      const x = centerX + r * Math.cos(angle);
+      const y = centerY + r * Math.sin(angle);
+
+      if (angle === 0) {
+        ctx.moveTo(x, y);
+      } else {
+        ctx.lineTo(x, y);
+      }
+    }
+    ctx.fill();
+  };
+
+  // Draw multiple layers of waves for depth
+  for (let i = 0; i < 3; i++) {
+    drawWine();
+  }
+
+  // Add a subtle shine effect
+  const gradient = ctx.createRadialGradient(
+    centerX - radius * 0.5, 
+    centerY - radius * 0.5, 
+    0, 
+    centerX, 
+    centerY, 
+    radius
+  );
+  gradient.addColorStop(0, 'rgba(255, 255, 255, 0.2)');
+  gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+  ctx.fillStyle = gradient;
+  ctx.fill();
+
+  // Draw the circular boundary (goblet rim)
+  ctx.beginPath();
+  ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+  ctx.strokeStyle = hexToRgba(colors[1], 0.5);
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Restore the canvas context
   ctx.restore();
 }

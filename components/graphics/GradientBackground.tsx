@@ -3,12 +3,12 @@ import React, { useState, useRef, useEffect } from 'react';
 import ColorPickers from './ColorPickers';
 import ExportCode from '@/components/utils/ExportCode';
 import ExportGif from '@/components/utils/ExportGif';
-import { renderGradientFrame, renderHorizontalWaveFrame, renderCircularWaveFrame, renderTsunamiWaveFrame } from '@/components/utils/AnimationUtils';
+import { renderGradientFrame, renderCircularWaveFrame, renderTsunamiWaveFrame } from '@/components/utils/AnimationUtils';
 
-type AnimationType = 'gradient' | 'ripples' | 'standingWave' | 'tsunami';
+type AnimationType = 'gradient' | 'standingWave' | 'tsunami';
 
 const GradientBackground: React.FC = () => {
-  const [colors, setColors] = useState(['#2C74B3', '#FFFFFF']);
+  const [colors, setColors] = useState(['#5538F6', '#FFFFFF']);
   const [animationDuration, setAnimationDuration] = useState(10);
   const [animationType, setAnimationType] = useState<AnimationType>('standingWave');
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -44,9 +44,6 @@ const GradientBackground: React.FC = () => {
         case 'gradient':
           renderGradientFrame(ctx, colors, progress, width, height);
           break;
-        case 'ripples':
-          renderHorizontalWaveFrame(ctx, colors, progress, width, height);
-          break;
         case 'standingWave':
           renderCircularWaveFrame(ctx, colors, progress, width, height);
           break;
@@ -75,7 +72,6 @@ const GradientBackground: React.FC = () => {
           <div className="flex gap-4">
             {[
               { type: 'gradient', icon: '🌈' },
-              { type: 'ripples', icon: '🌊' },
               { type: 'standingWave', icon: '🌀' },
               { type: 'tsunami', icon: '🌊' }
             ].map(({ type, icon }) => (
