@@ -5,12 +5,12 @@ import ExportCode from '@/components/utils/ExportCode';
 import ExportGif from '@/components/utils/ExportGif';
 import { renderGradientFrame, renderHorizontalWaveFrame, renderCircularWaveFrame } from '@/components/utils/AnimationUtils';
 
-type AnimationType = 'gradient' | 'horizontalWave' | 'circularWave';
+type AnimationType = 'Gradient' | 'Horizontal Wave' | 'Circular Wave';
 
 const GradientBackground: React.FC = () => {
-  const [colors, setColors] = useState(['#ff00cc', '#3333ff']);
+  const [colors, setColors] = useState(['#2C74B3', '#FFFFFF']);
   const [animationDuration, setAnimationDuration] = useState(10);
-  const [animationType, setAnimationType] = useState<AnimationType>('gradient');
+  const [animationType, setAnimationType] = useState<AnimationType>('Circular Wave');
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -20,6 +20,17 @@ const GradientBackground: React.FC = () => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    // Set canvas size
+    const resizeCanvas = () => {
+      const { width, height } = canvas.getBoundingClientRect();
+      canvas.width = width * window.devicePixelRatio;
+      canvas.height = height * window.devicePixelRatio;
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    };
+
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
     let animationFrameId: number;
     let startTime: number;
 
@@ -27,17 +38,17 @@ const GradientBackground: React.FC = () => {
       if (!startTime) startTime = timestamp;
       const progress = ((timestamp - startTime) / 1000 / animationDuration) % 1;
 
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const { width, height } = canvas.getBoundingClientRect();
 
       switch (animationType) {
-        case 'gradient':
-          renderGradientFrame(ctx, colors, progress, canvas.width, canvas.height);
+        case 'Gradient':
+          renderGradientFrame(ctx, colors, progress, width, height);
           break;
-        case 'horizontalWave':
-          renderHorizontalWaveFrame(ctx, colors, progress, canvas.width, canvas.height);
+        case 'Horizontal Wave':
+          renderHorizontalWaveFrame(ctx, colors, progress, width, height);
           break;
-        case 'circularWave':
-          renderCircularWaveFrame(ctx, colors, progress, canvas.width, canvas.height);
+        case 'Circular Wave':
+          renderCircularWaveFrame(ctx, colors, progress, width, height);
           break;
       }
 
@@ -48,6 +59,7 @@ const GradientBackground: React.FC = () => {
 
     return () => {
       cancelAnimationFrame(animationFrameId);
+      window.removeEventListener('resize', resizeCanvas);
     };
   }, [colors, animationDuration, animationType]);
 
@@ -59,9 +71,9 @@ const GradientBackground: React.FC = () => {
           <h3 className="text-lg font-semibold mb-4">Select Animation Type</h3>
           <div className="flex gap-4">
             {[
-              { type: 'gradient', icon: '🌈' },
-              { type: 'horizontalWave', icon: '🌊' },
-              { type: 'circularWave', icon: '🌀' }
+              { type: 'Gradient', icon: '🌈' },
+              { type: 'Horizontal Wave', icon: '🌊' },
+              { type: 'Circular Wave', icon: '🌀' }
             ].map(({ type, icon }) => (
               <label key={type} className="flex flex-col items-center">
                 <input
@@ -81,13 +93,11 @@ const GradientBackground: React.FC = () => {
           </div>
         </div>
         
-        {/* Animation display */}
         <div className="mb-8 h-64 relative overflow-hidden rounded-lg shadow-lg">
           <canvas
             ref={canvasRef}
-            width={640}
-            height={256}
             className="w-full h-full"
+            style={{ width: '100%', height: '100%' }}
           />
         </div>
         

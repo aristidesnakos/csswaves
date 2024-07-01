@@ -5,7 +5,7 @@ import { renderGradientFrame, renderHorizontalWaveFrame, renderCircularWaveFrame
 interface ExportGifProps {
   colors: string[];
   duration: number;
-  animationType: 'gradient' | 'horizontalWave' | 'circularWave';
+  animationType: 'Gradient' | 'Horizontal Wave' | 'Circular Wave';
   canvasRef: React.RefObject<HTMLCanvasElement>;
 }
 
@@ -33,17 +33,18 @@ const ExportGif: React.FC<ExportGifProps> = ({ colors, duration, animationType, 
         width: canvas.width,
         height: canvas.height,
         workerScript: '/gif.worker.js',
+        repeat: 0  // Add this line to make the GIF loop indefinitely
       });
 
       const renderFrame = (progress: number) => {
         switch (animationType) {
-          case 'gradient':
+          case 'Gradient':
             renderGradientFrame(ctx, colors, progress, canvas.width, canvas.height);
             break;
-          case 'horizontalWave':
+          case 'Horizontal Wave':
             renderHorizontalWaveFrame(ctx, colors, progress, canvas.width, canvas.height);
             break;
-          case 'circularWave':
+          case 'Circular Wave':
             renderCircularWaveFrame(ctx, colors, progress, canvas.width, canvas.height);
             break;
         }
