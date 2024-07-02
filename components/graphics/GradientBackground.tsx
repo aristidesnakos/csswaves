@@ -3,8 +3,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import ColorPickers from './ColorPickers';
 import ExportCode from '@/components/utils/ExportCode';
 import ExportGif from '@/components/utils/ExportGif';
-import AudioResponsiveAnimation from './AudioResponsiveAnimation';
 import { renderGradientFrame, renderCircularWaveFrame, renderTsunamiWaveFrame } from '@/components/utils/AnimationUtils';
+import useAudioAnalyzer from '@/hooks/useAudioAnalyzer';
 
 type AnimationType = 'gradient' | 'standingWave' | 'tsunami';
 
@@ -14,6 +14,7 @@ const GradientBackground: React.FC = () => {
   const [isAudioResponsive, setIsAudioResponsive] = useState(false);
   const [animationType, setAnimationType] = useState<AnimationType>('standingWave');
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const { audioData, isListening, toggleListening } = useAudioAnalyzer();
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -42,15 +43,17 @@ const GradientBackground: React.FC = () => {
 
       const { width, height } = canvas.getBoundingClientRect();
 
+      const reactivity = isAudioResponsive && audioData ? audioData.average / 255 : progress;
+
       switch (animationType) {
         case 'gradient':
-          renderGradientFrame(ctx, colors, progress, width, height);
+          renderGradientFrame(ctx, colors, reactivity, width, height);
           break;
         case 'standingWave':
-          renderCircularWaveFrame(ctx, colors, progress, width, height);
+          renderCircularWaveFrame(ctx, colors, reactivity, width, height);
           break;
         case 'tsunami':
-          renderTsunamiWaveFrame(ctx, colors, progress, width, height);
+          renderTsunamiWaveFrame(ctx, colors, reactivity, width, height);
           break;
       }
 
@@ -63,7 +66,12 @@ const GradientBackground: React.FC = () => {
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener('resize', resizeCanvas);
     };
-  }, [colors, animationDuration, animationType]);
+  }, [colors, animationDuration, animationType, isAudioResponsive, audioData]);
+
+  const handleAudioToggle = () => {
+    setIsAudioResponsive(!isAudioResponsive);
+    toggleListening();
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -94,21 +102,20 @@ const GradientBackground: React.FC = () => {
             ))}
           </div>
         </div>
-        
-        {isAudioResponsive ? (
-          <AudioResponsiveAnimation
-            colors={colors}
-            animationType={animationType}
-            width={canvasRef.current?.width || 0}
-            height={canvasRef.current?.height || 0}
-          />
-        ) : (
+        <div className="mb-8">
           <canvas
             ref={canvasRef}
-            className="w-full h-full"
-            style={{ width: '100%', height: '100%' }}
+            className="w-full h-96"
+            style={{ width: '100%', height: '400px' }}
           />
-        )}
+          
+          <button
+            onClick={handleAudioToggle}
+            className="px-6 py-2 mt-4 font-semibold text-white bg-purple-500 rounded-lg shadow-lg"
+          >
+            {isAudioResponsive ? 'Disable' : 'Enable'} Audio Responsive Mode
+          </button>
+        </div>
         
         <div className='flex flex-col md:flex-row justify-between items-start gap-8 mb-8'>
           <ColorPickers colors={colors} setColors={setColors} />
@@ -128,13 +135,6 @@ const GradientBackground: React.FC = () => {
             <span>{animationDuration}s</span>
           </div>
         </div>
-
-        <button
-          onClick={() => setIsAudioResponsive(!isAudioResponsive)}
-          className="px-6 py-2 mt-4 font-semibold text-white bg-purple-500 rounded-lg shadow-lg"
-        >
-          {isAudioResponsive ? 'Disable' : 'Enable'} Audio Responsive Mode
-        </button>
         
         <div className="flex gap-4 mb-4">
           <ExportGif

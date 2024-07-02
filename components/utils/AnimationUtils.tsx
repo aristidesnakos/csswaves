@@ -154,8 +154,8 @@ export function renderGradientFrame(
   
     // Draw celestial object
     const celestialRadius = Math.min(width, height) * 0.1;
-    const celestialX = width * 0.1;
-    const celestialY = height - celestialRadius - (height * 0.4 * Math.sin(progress * Math.PI * 2));
+    const celestialX = width * 0.08;
+    const celestialY = height * 0.15;
     
     ctx.beginPath();
     ctx.arc(celestialX, celestialY, celestialRadius, 0, Math.PI * 2);
@@ -171,10 +171,19 @@ export function renderGradientFrame(
     
     ctx.beginPath();
     ctx.moveTo(waveX, height);
-    for (let x = 0; x <= waveWidth; x++) {
+  
+    const droplets: [number, number][] = [];
+  
+    for (let x = 0; x <= waveWidth; x += 5) {
       const relativeX = x / waveWidth;
-      const y = height - waveHeight * Math.pow(Math.sin(relativeX * Math.PI), 2);
+      const randomFactor = Math.random() * 0.01 - 0.05;
+      const y = height - waveHeight * Math.pow(Math.sin(relativeX * Math.PI + randomFactor), 2);
       ctx.lineTo(waveX + x, y);
+  
+      // Add droplets when wave passes halfway
+      if (progress > 0.5 && relativeX > 0.7 && relativeX < 0.9 && Math.random() > 0.95) {
+        droplets.push([waveX + x, y - Math.random() * 30]);
+      }
     }
     ctx.lineTo(waveX + waveWidth, height);
     ctx.closePath();
@@ -184,4 +193,26 @@ export function renderGradientFrame(
     gradient.addColorStop(1, colors[1]);
     ctx.fillStyle = gradient;
     ctx.fill();
+  
+    // Draw droplets
+    ctx.fillStyle = colors[1];
+    droplets.forEach(([x, y]) => {
+      ctx.beginPath();
+      ctx.arc(x, y, 2, 0, Math.PI * 2);
+      ctx.fill();
+    });
+  
+    // Add foam at the wave's crest
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    for (let x = 0; x <= waveWidth; x += 10) {
+      const relativeX = x / waveWidth;
+      if (relativeX > 0.6 && relativeX < 0.9) {
+        const y = height - waveHeight * Math.pow(Math.sin(relativeX * Math.PI), 2);
+        ctx.moveTo(waveX + x, y);
+        ctx.lineTo(waveX + x + Math.random() * 10 - 5, y + Math.random() * 10 - 5);
+      }
+    }
+    ctx.stroke();
   }
