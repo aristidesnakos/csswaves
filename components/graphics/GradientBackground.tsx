@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import ColorPickers from './ColorPickers';
 import ExportCode from '@/components/utils/ExportCode';
 import ExportGif from '@/components/utils/ExportGif';
+import AudioResponsiveAnimation from './AudioResponsiveAnimation';
 import { renderGradientFrame, renderCircularWaveFrame, renderTsunamiWaveFrame } from '@/components/utils/AnimationUtils';
 
 type AnimationType = 'gradient' | 'standingWave' | 'tsunami';
@@ -10,6 +11,7 @@ type AnimationType = 'gradient' | 'standingWave' | 'tsunami';
 const GradientBackground: React.FC = () => {
   const [colors, setColors] = useState(['#5538F6', '#FFFFFF']);
   const [animationDuration, setAnimationDuration] = useState(10);
+  const [isAudioResponsive, setIsAudioResponsive] = useState(false);
   const [animationType, setAnimationType] = useState<AnimationType>('standingWave');
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -93,15 +95,21 @@ const GradientBackground: React.FC = () => {
           </div>
         </div>
         
-        <div className="mb-8 h-64 relative overflow-hidden rounded-lg shadow-lg">
+        {isAudioResponsive ? (
+          <AudioResponsiveAnimation
+            colors={colors}
+            animationType={animationType}
+            width={canvasRef.current?.width || 0}
+            height={canvasRef.current?.height || 0}
+          />
+        ) : (
           <canvas
             ref={canvasRef}
             className="w-full h-full"
             style={{ width: '100%', height: '100%' }}
           />
-        </div>
+        )}
         
-        {/* Color pickers and duration slider */}
         <div className='flex flex-col md:flex-row justify-between items-start gap-8 mb-8'>
           <ColorPickers colors={colors} setColors={setColors} />
           <div className="flex-grow">
@@ -120,8 +128,14 @@ const GradientBackground: React.FC = () => {
             <span>{animationDuration}s</span>
           </div>
         </div>
+
+        <button
+          onClick={() => setIsAudioResponsive(!isAudioResponsive)}
+          className="px-6 py-2 mt-4 font-semibold text-white bg-purple-500 rounded-lg shadow-lg"
+        >
+          {isAudioResponsive ? 'Disable' : 'Enable'} Audio Responsive Mode
+        </button>
         
-        {/* Export buttons */}
         <div className="flex gap-4 mb-4">
           <ExportGif
             colors={colors}
@@ -131,7 +145,6 @@ const GradientBackground: React.FC = () => {
           />
         </div>
         
-        {/* Export code */}
         <ExportCode colors={colors} animationDuration={animationDuration} animationType={animationType} />
       </div>
     </div>
