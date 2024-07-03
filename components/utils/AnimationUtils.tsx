@@ -98,7 +98,6 @@ export function renderGradientFrame(
     // Draw multiple standing waves with different parameters
     drawStandingWave(radius * 0.4, 0.003, 0.4);
     drawStandingWave(radius * 0.35, 0.005, 0.3);
-    // drawStandingWave(radius * 0.4, 0.07, 0.2);
   
     // Fill the top portion with the background color
     ctx.beginPath();
