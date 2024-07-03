@@ -1,6 +1,5 @@
 import GIF from 'gif.js';
 import { reactComponentToImage } from '@/components/utils/ReactToImage';
-import CircularWaveAnimation from '@/components/graphics/CircularWaveAnimation';
 
 interface AnimationToGifOptions {
   colors: string[];
@@ -37,7 +36,6 @@ export async function animationToGif({
       const progress = i / frames;
 
       const imageDataUrl = await reactComponentToImage(
-        CircularWaveAnimation,
         { colors, progress },
         width,
         height
