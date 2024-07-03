@@ -65,11 +65,11 @@ These Terms of Service ("Terms") govern your use of the SoFaast website at https
 
 1. Description of SoFaast
 
-SoFaast is a platform that offers a JavaScript code boilerplate to assist entrepreneurs in launching their startups more efficiently.
+SoFaast is a platform that offers graphics such as CSS visualizations to be delivered fast.
 
 2. Ownership and Usage Rights
 
-When you purchase a package from SoFaast, you gain the right to download and use the code provided for creating applications. You own the code you create but do not have the right to resell it. We offer a full refund within 7 days of purchase, as specified in our refund policy.
+When you purchase a graphic from SoFaast, you gain the right to use and resell the graphic freely. We offer a full refund within 7 days of purchase, as specified in our refund policy.
 
 3. User Data and Privacy
 
