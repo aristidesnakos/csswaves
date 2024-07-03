@@ -4,7 +4,7 @@ import { useState } from "react";
 import type { JSX } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import ButtonSignin from "./ButtonSignin";
+// import ButtonSignin from "./ButtonSignin";
 import logo from "@/app/icon.png";
 import config from "@/config";
 
@@ -12,21 +12,21 @@ const links: {
   href: string;
   label: string;
 }[] = [
-  {
-    href: "/#pricing",
-    label: "Pricing",
-  },
-  {
-    href: "/#testimonials",
-    label: "Reviews",
-  },
+  // {
+  //   href: "/#pricing",
+  //   label: "Pricing",
+  // },
+  // {
+  //   href: "/#testimonials",
+  //   label: "Reviews",
+  // },
   {
     href: "/#faq",
     label: "FAQ",
   },
 ];
 
-const cta: JSX.Element = <ButtonSignin extraStyle="btn-primary" />;
+// const cta: JSX.Element = <ButtonSignin extraStyle="btn-primary" />;
 
 // A header with a logo on the left, links in the center (like Pricing, etc...), and a CTA (like Get Started or Login) on the right.
 // The header is responsive, and on mobile, the links are hidden behind a burger button.
@@ -99,7 +99,7 @@ const Header = () => {
         </div>
 
         {/* CTA on large screens */}
-        <div className="hidden lg:flex lg:justify-end lg:flex-1">{cta}</div>
+        {/* <div className="hidden lg:flex lg:justify-end lg:flex-1">{cta}</div> */}
       </nav>
 
       {/* Mobile menu, show/hide based on menu state. */}
@@ -166,7 +166,7 @@ const Header = () => {
             </div>
             <div className="divider"></div>
             {/* Your CTA on small screens */}
-            <div className="flex flex-col">{cta}</div>
+            {/* <div className="flex flex-col">{cta}</div> */}
           </div>
         </div>
       </div>
