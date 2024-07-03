@@ -12,8 +12,8 @@ import config from "@/config";
 // You are an excellent lawyer.
 
 // I need your help to write a simple privacy policy for my website. Here is some context:
-// - Website: https://sofaast.com
-// - Name: SoFaast
+// - Website: https://featurevista.com
+// - Name: FeatureVista
 // - Description: A JavaScript code boilerplate to help entrepreneurs launch their startups faster
 // - User data collected: name, email and payment information
 // - Non-personal data collection: web cookies
@@ -57,9 +57,9 @@ const PrivacyPolicy = () => {
           className="leading-relaxed whitespace-pre-wrap"
           style={{ fontFamily: "sans-serif" }}
         >
-          {`Last Updated: July 2, 2024
+          {`Last Updated: July 3, 2024
 
-Thank you for visiting SoFaast ("we," "us," or "our"). This Privacy Policy outlines how we collect, use, and protect your personal and non-personal information when you use our website located at https://sofaast.com (the "Website").
+Thank you for visiting FeatureVista ("we," "us," or "our"). This Privacy Policy outlines how we collect, use, and protect your personal and non-personal information when you use our website located at https://featurevista.com (the "Website").
 
 By accessing or using the Website, you agree to the terms of this Privacy Policy. If you do not agree with the practices described in this policy, please do not use the Website.
 
@@ -87,7 +87,7 @@ We do not share your personal data with any third parties except as required for
 
 4. Children's Privacy
 
-SoFaast is not intended for children under the age of 13. We do not knowingly collect personal information from children. If you are a parent or guardian and believe that your child has provided us with personal information, please contact us at the email address provided below.
+FeatureVista is not intended for children under the age of 13. We do not knowingly collect personal information from children. If you are a parent or guardian and believe that your child has provided us with personal information, please contact us at the email address provided below.
 
 5. Updates to the Privacy Policy
 
@@ -101,7 +101,7 @@ Email: ari@theauspiciouscompany.com
 
 For all other inquiries, please visit our Contact Us page on the Website.
 
-By using SoFaast, you consent to the terms of this Privacy Policy.`}
+By using FeatureVista, you consent to the terms of this Privacy Policy.`}
         </pre>
       </div>
     </main>
