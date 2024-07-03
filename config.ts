@@ -6,7 +6,7 @@ const config = {
   appName: "FeatureVista",
   // REQUIRED: a short description of your app for SEO tags (can be overwritten)
   appDescription:
-    "Simple features for your viewing pleasure.",
+    "Features for your viewing pleasure.",
   // REQUIRED (no https://, not trialing slash at the end, just the naked domain)
   domainName: "featurevista.com",
   crisp: {
