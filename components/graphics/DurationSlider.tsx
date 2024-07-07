@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from './GradientBackground.module.css';
+import styles from './Graphics.module.css';
 
 interface DurationSliderProps {
   duration: number;

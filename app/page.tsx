@@ -1,6 +1,6 @@
 import Header from '@/components/Header';
 import Hero from '@/components/Hero';
-import GradientBackground from '@/components/graphics/GradientBackground';
+import GraphicsBackground from '@/components/graphics/GraphicsBackground';
 import Footer from '@/components/Footer';
 
 export default function Home() {
@@ -8,7 +8,7 @@ export default function Home() {
     <>
         <Header />
         <Hero />
-        <GradientBackground />
+        <GraphicsBackground />
       <Footer />
     </>
   );

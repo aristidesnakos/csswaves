@@ -8,7 +8,7 @@ import useAudioAnalyzer from '@/hooks/useAudioAnalyzer';
 
 type AnimationType = 'gradient' | 'standingWave' | 'tsunami';
 
-const GradientBackground: React.FC = () => {
+const GraphicsBackground: React.FC = () => {
   const [colors, setColors] = useState(['#5538F6', '#FFFFFF']);
   const [animationDuration, setAnimationDuration] = useState(10);
   const [isAudioResponsive, setIsAudioResponsive] = useState(false);
@@ -105,7 +105,7 @@ const GradientBackground: React.FC = () => {
         <div className="mb-8">
           <canvas
             ref={canvasRef}
-            className="w-full h-96"
+            className="w-full h-96 rounded-lg"
             style={{ width: '100%', height: '400px' }}
           />
           
@@ -151,4 +151,4 @@ const GradientBackground: React.FC = () => {
   );
 };
 
-export default GradientBackground;
+export default GraphicsBackground;
