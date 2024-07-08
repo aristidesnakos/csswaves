@@ -109,17 +109,17 @@ const GraphicsBackground: React.FC = () => {
             style={{ width: '100%', height: '400px' }}
           />
           
-          <button
+          {/* <button
             onClick={handleAudioToggle}
             className="px-6 py-2 mt-4 font-semibold text-white bg-purple-500 rounded-lg shadow-lg"
           >
             {isAudioResponsive ? 'Disable' : 'Enable'} Audio Responsive Mode
-          </button>
+          </button> */}
         </div>
         
         <div className='flex flex-col md:flex-row justify-between items-start gap-8 mb-8'>
           <ColorPickers colors={colors} setColors={setColors} />
-          <div className="flex-grow">
+          {/* <div className="flex-grow">
             <label htmlFor="animation-duration" className="block text-sm font-medium text-gray-700 mb-1">
               Animation Duration (seconds)
             </label>
@@ -133,13 +133,13 @@ const GraphicsBackground: React.FC = () => {
               className="w-full"
             />
             <span>{animationDuration}s</span>
-          </div>
+          </div> */}
         </div>
         
         <div className="flex gap-4 mb-4">
           <ExportGif
             colors={colors}
-            duration={animationDuration}
+            duration={10}
             animationType={animationType}
             canvasRef={canvasRef}
           />
